@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "SafeZone Kamera",
+    "slug": "safezone-ai-kamera",
+    "owner": "joelb3s-team",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "extra": {
+      "eas": { "projectId": "38aa7fb9-f974-4d37-a9be-4e0ea354b5b7" }
+    },
+    "ios": {
+      "bundleIdentifier": "de.safezone.camera",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSAppTransportSecurity": { "NSAllowsArbitraryLoads": true, "NSAllowsLocalNetworking": true },
+        "NSLocalNetworkUsageDescription": "SafeZone Kamera streamt an den WHIP-Server im Tailscale-/lokalen Netzwerk.",
+        "NSCameraUsageDescription": "SafeZone Kamera überträgt das Kamerabild als Live-Stream zur Waffenerkennung.",
+        "NSMicrophoneUsageDescription": "SafeZone Kamera überträgt Ton zusammen mit dem Videostream."
+      }
+    },
+    "android": {
+      "package": "de.safezone.camera",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#22385D"
+      },
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "INTERNET"
+      ]
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font",
+      "@config-plugins/react-native-webrtc",
+      ["expo-build-properties", { "android": { "kotlinVersion": "1.9.25", "usesCleartextTraffic": true, "newArchEnabled": false } }]
+    ]
+  }
+}
