@@ -27,6 +27,25 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 
+// iOS 18+: „Lokales Netzwerk"-Berechtigung aktiv anstossen (echter Bonjour-Browser
+// via @generac/react-native-local-network-permission). Ohne das blockt iOS den
+// Zugriff auf die Tailscale-IP (100.x) still -> kein WHIP-Stream, kein /kamera/ort.
+// Analog zur Haupt-App. Braucht NSBonjourServices + NSLocalNetworkUsageDescription.
+let _reqLNA = null;
+try { _reqLNA = require("@generac/react-native-local-network-permission").requestLocalNetworkAccess; } catch (_) {}
+async function triggerLocalNetworkPromptCam() {
+  if (Platform.OS !== "ios") return;
+  if (_reqLNA) { try { await _reqLNA(); } catch (_) {} }
+  for (const url of ["http://safezone-ai.local:8080/health", "http://_http._tcp.local./"]) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 1500);
+      await fetch(url, { method: "GET", signal: ctrl.signal }).catch(() => {});
+      clearTimeout(t);
+    } catch (_) {}
+  }
+}
+
 // Standard-Einstellungen (im Einstellungs-Screen überschreibbar)
 const DEFAULTS = {
   serverHost: "100.105.250.113", // Tailscale-IP des LXC 160
@@ -132,6 +151,7 @@ export default function App() {
   // Einstellungen laden + Rechte anfragen + Linsen auflisten
   useEffect(() => {
     (async () => {
+      await triggerLocalNetworkPromptCam();   // iOS: Lokales-Netzwerk-Dialog aktiv ausloesen
       const v = await AsyncStorage.getItem("cfg");
       const merged = v ? { ...DEFAULTS, ...JSON.parse(v) } : DEFAULTS;
       setCfg(merged); cfgRef.current = merged;
