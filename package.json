@@ -5,7 +5,8 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "check": "node tools/check-quotes.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
